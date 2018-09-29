@@ -9,3 +9,11 @@ library(tidyverse)
 ```
 
 ## Problem 1
+Read and clean the data
+```{r}
+subway_data = 
+  read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
+  janitor::clean_names() %>%
+  select(line:entry, vending, ada) %>% 
+  mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
+```

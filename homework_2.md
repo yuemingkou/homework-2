@@ -102,3 +102,11 @@ precipitation_2017 =
   filter(!is.na(total)) %>% 
   mutate(year = "2017")
 ```
+
+Combine datasets and convert month to a character variable:
+
+``` r
+precipitation_data = 
+  bind_rows(precipitation_2016, precipitation_2017) %>% 
+  mutate(month = month.name[month])
+```

@@ -51,3 +51,5 @@ How many distinct stations serve the A train? Of the stations that serve the A t
 `r nrow(filter(distinct_tidy, route_name == "A"))` distinct stations serve the A train.
 
 Of the stations that serve the A train, `r nrow(filter(distinct_tidy, route_name == "A", ada == TRUE))` are ADA compliant.
+
+## Problem 2

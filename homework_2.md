@@ -67,3 +67,6 @@ How many distinct stations serve the A train? Of the stations that serve the A t
 60 distinct stations serve the A train.
 
 Of the stations that serve the A train, 17 are ADA compliant.
+
+Problem 2
+---------

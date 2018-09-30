@@ -116,3 +116,6 @@ The number of observations in "mr\_trash\_data" is 215. The number of observatio
 Examples of key variables:
 
 The total precipitation in 2017 is 29.93. The median number of sports balls in a dumpster in 2016 is 26.
+
+Problem 3
+---------

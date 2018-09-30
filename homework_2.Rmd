@@ -97,3 +97,5 @@ Examples of key variables:
 The total precipitation in 2017 is `r sum(precipitation_2017$total)`.
 The median number of sports balls in a dumpster in 2016 is 
 `r median(subset(mr_trash_data, year == 2016)$sports_balls)`.
+
+## Problem 3

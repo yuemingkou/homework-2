@@ -119,3 +119,31 @@ The total precipitation in 2017 is 29.93. The median number of sports balls in a
 
 Problem 3
 ---------
+
+load the data from the p8105.datasets package:
+
+``` r
+devtools::install_github("p8105/p8105.datasets")
+```
+
+    ## Skipping install of 'p8105.datasets' from a github remote, the SHA1 (21f5ad1c) has not changed since last install.
+    ##   Use `force = TRUE` to force installation
+
+``` r
+library(p8105.datasets)
+```
+
+clean the data:
+
+``` r
+brfss_data = 
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health") %>% 
+  select(-class, -topic, -question, -sample_size, 
+         -(confidence_limit_low:geo_location)) %>% 
+  spread(key = response, value = data_value) %>% 
+  janitor::clean_names() %>% 
+  select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
+  mutate(prop_exc_vg = excellent + very_good)
+```

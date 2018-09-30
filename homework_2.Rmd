@@ -99,3 +99,22 @@ The median number of sports balls in a dumpster in 2016 is
 `r median(subset(mr_trash_data, year == 2016)$sports_balls)`.
 
 ## Problem 3
+load the data from the  p8105.datasets package: 
+```{r}
+devtools::install_github("p8105/p8105.datasets")
+library(p8105.datasets)
+```
+clean the data:
+```{r}
+brfss_data = 
+  brfss_smart2010 %>% 
+  janitor::clean_names() %>% 
+  filter(topic == "Overall Health") %>% 
+  select(-class, -topic, -question, -sample_size, 
+         -(confidence_limit_low:geo_location)) %>% 
+  spread(key = response, value = data_value) %>% 
+  janitor::clean_names() %>% 
+  select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
+  mutate(prop_exc_vg = excellent + very_good)
+```
+

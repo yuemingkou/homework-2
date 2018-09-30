@@ -70,14 +70,14 @@ Read and clean precipitation data for 2016 and 2017:
 ```{r}
 precipitation_2016 =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 4,
-             range = "A2:B15") %>% 
+             range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = "2016")
 
 precipitation_2017 =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 3,
-             range = "A2:B15") %>% 
+             range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = "2017")
@@ -89,3 +89,11 @@ precipitation_data =
   bind_rows(precipitation_2016, precipitation_2017) %>% 
   mutate(month = month.name[month])
 ```
+The number of observations in "mr_trash_data" is `r nrow(mr_trash_data)`.
+The number of observations in "precipitation_data" is `r nrow(precipitation_data)`.
+
+Examples of key variables:
+
+The total precipitation in 2017 is `r sum(precipitation_2017$total)`.
+The median number of sports balls in a dumpster in 2016 is 
+`r median(subset(mr_trash_data, year == 2016)$sports_balls)`.

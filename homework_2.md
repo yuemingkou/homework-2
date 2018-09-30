@@ -90,14 +90,14 @@ Read and clean precipitation data for 2016 and 2017:
 ``` r
 precipitation_2016 =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 4,
-             range = "A2:B15") %>% 
+             range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = "2016")
 
 precipitation_2017 =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 3,
-             range = "A2:B15") %>% 
+             range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = "2017")
@@ -110,3 +110,9 @@ precipitation_data =
   bind_rows(precipitation_2016, precipitation_2017) %>% 
   mutate(month = month.name[month])
 ```
+
+The number of observations in "mr\_trash\_data" is 215. The number of observations in "precipitation\_data" is 20.
+
+Examples of key variables:
+
+The total precipitation in 2017 is 29.93. The median number of sports balls in a dumpster in 2016 is 26.

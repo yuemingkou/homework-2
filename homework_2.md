@@ -54,3 +54,16 @@ distinct_data = mutate(distinct_data, vending = recode(vending, "YES" = TRUE, "N
 ```
 
 The proportion of station entrances / exits without vending allow entrance is 0.0193548
+
+Reformat data so that route number and route name are distinct variables.
+
+``` r
+distinct_tidy = gather(distinct_data, key = route_number, value = route_name, 
+                       route1:route11, na.rm = TRUE)
+```
+
+How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
+
+60 distinct stations serve the A train.
+
+Of the stations that serve the A train, 17 are ADA compliant.

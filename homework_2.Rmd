@@ -40,3 +40,14 @@ distinct_data = mutate(distinct_data, vending = recode(vending, "YES" = TRUE, "N
 ```
 The proportion of station entrances / exits without vending allow entrance is 
 `r 1 - sum(distinct_data$vending, na.rm = FALSE) / length(distinct_data$vending)`
+
+Reformat data so that route number and route name are distinct variables. 
+```{r}
+distinct_tidy = gather(distinct_data, key = route_number, value = route_name, 
+                       route1:route11, na.rm = TRUE)
+```
+How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
+
+`r nrow(filter(distinct_tidy, route_name == "A"))` distinct stations serve the A train.
+
+Of the stations that serve the A train, `r nrow(filter(distinct_tidy, route_name == "A", ada == TRUE))` are ADA compliant.

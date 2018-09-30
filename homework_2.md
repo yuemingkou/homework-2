@@ -70,3 +70,17 @@ Of the stations that serve the A train, 17 are ADA compliant.
 
 Problem 2
 ---------
+
+Read and clean the Mr.Trash Wheel sheet:
+
+``` r
+library(readxl)
+library(cellranger)
+mr_trash_data = 
+  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 1,
+             range = cell_cols("A:N")) %>% 
+  janitor::clean_names() %>% 
+  filter(!is.na(dumpster), month != "Grand Total") %>% 
+  mutate(sports_balls = round(sports_balls), 
+         sports_balls = as.integer(sports_balls))
+```

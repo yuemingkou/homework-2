@@ -147,3 +147,61 @@ brfss_data =
   select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
   mutate(prop_exc_vg = excellent + very_good)
 ```
+
+1）How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
+
+``` r
+state_count = 
+  brfss_data %>% 
+  distinct(locationdesc, .keep_all = TRUE) %>% 
+  count(locationabbr) %>% 
+  arrange(desc(n))
+state_count
+```
+
+    ## # A tibble: 51 x 2
+    ##    locationabbr     n
+    ##    <chr>        <int>
+    ##  1 FL              44
+    ##  2 TX              20
+    ##  3 NJ              19
+    ##  4 NC              16
+    ##  5 OK              15
+    ##  6 SC              15
+    ##  7 WA              15
+    ##  8 MD              14
+    ##  9 PA              14
+    ## 10 CA              12
+    ## # ... with 41 more rows
+
+404 unique locations are included in the dataset. From state\_count, we can see every state is represented. FL is observed the most.
+
+2）In 2002, what is the median of the “Excellent” response value?
+
+``` r
+brfss_2002 = filter(brfss_data, year == 2002)
+```
+
+In 2012, the median of the "Excellent" response value is 23.6
+
+3）Make a histogram of “Excellent” response values in the year 2002:
+
+``` r
+ggplot(brfss_2002, aes(x = excellent)) + geom_histogram()
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 2 rows containing non-finite values (stat_bin).
+
+![](homework_2_files/figure-markdown_github/unnamed-chunk-12-1.png)
+
+4）Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010:
+
+``` r
+brfss_data %>% 
+  filter(locationdesc %in% c("NY - New York County", "NY - Queens County")) %>% 
+  ggplot(aes(x = year, y = excellent)) + geom_point(aes(color = locationdesc))
+```
+
+![](homework_2_files/figure-markdown_github/unnamed-chunk-13-1.png)

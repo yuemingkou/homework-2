@@ -127,12 +127,12 @@ brfss_data
 1）How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
 ```{r }
 unique_location = distinct(brfss_data, locationdesc, .keep_all = TRUE) 
-state_data = count(unique_location, locationabbr) %>% 
+state_frequency = count(brfss_data, locationabbr) %>% 
   arrange(desc(n))
-state_data
+state_frequency
 ```
 `r nrow(unique_location)` unique locations are included in the dataset.
-From state_count, we can see every state is represented. FL is observed the most.
+From state_frequency, we can see every state is represented. NJ is observed the most.
 
 2）In 2002, what is the median of the “Excellent” response value?
 
@@ -140,13 +140,29 @@ In 2002, the median of the "Excellent" response value is `r median(filter(brfss_
 
 3）Make a histogram of “Excellent” response values in the year 2002:
 ```{r histogram}
-ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) + geom_histogram()
+ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) + 
+  geom_histogram() +
+    labs(
+      title = "Histogram of “Excellent” response values",
+      x = " “Excellent” response values",
+      y = "Frequency"
+    ) + 
+    theme_bw()
 ```
 
 4）Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010:
 ```{r scatterplot}
 brfss_data %>% 
   filter(locationdesc %in% c("NY - New York County", "NY - Queens County")) %>% 
-  ggplot(aes(x = year, y = excellent)) + geom_point(aes(color = locationdesc))
+  ggplot(aes(x = year, y = excellent, color = locationdesc)) + 
+    geom_point() +
+    geom_smooth(se = FALSE) +
+    labs(
+      title = "The proportion of “Excellent” response values",
+      x = "Year",
+      y = "The proportion of “Excellent”"
+    ) + 
+    theme_bw() + 
+    theme(legend.position = "bottom")
 ```
 

@@ -280,27 +280,27 @@ brfss_data
 
 ``` r
 unique_location = distinct(brfss_data, locationdesc, .keep_all = TRUE) 
-state_data = count(unique_location, locationabbr) %>% 
+state_frequency = count(brfss_data, locationabbr) %>% 
   arrange(desc(n))
-state_data
+state_frequency
 ```
 
     ## # A tibble: 51 x 2
     ##    locationabbr     n
     ##    <chr>        <int>
-    ##  1 FL              44
-    ##  2 TX              20
-    ##  3 NJ              19
-    ##  4 NC              16
-    ##  5 OK              15
-    ##  6 SC              15
-    ##  7 WA              15
-    ##  8 MD              14
-    ##  9 PA              14
-    ## 10 CA              12
+    ##  1 NJ             146
+    ##  2 FL             122
+    ##  3 NC             115
+    ##  4 WA              97
+    ##  5 MD              90
+    ##  6 MA              79
+    ##  7 TX              71
+    ##  8 NY              65
+    ##  9 SC              63
+    ## 10 CO              59
     ## # ... with 41 more rows
 
-404 unique locations are included in the dataset. From state\_count, we can see every state is represented. FL is observed the most.
+404 unique locations are included in the dataset. From state\_frequency, we can see every state is represented. NJ is observed the most.
 
 2）In 2002, what is the median of the “Excellent” response value?
 
@@ -309,7 +309,14 @@ In 2002, the median of the "Excellent" response value is 23.6
 3）Make a histogram of “Excellent” response values in the year 2002:
 
 ``` r
-ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) + geom_histogram()
+ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) + 
+  geom_histogram() +
+    labs(
+      title = "Histogram of “Excellent” response values",
+      x = " “Excellent” response values",
+      y = "Frequency"
+    ) + 
+    theme_bw()
 ```
 
     ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
@@ -323,7 +330,18 @@ ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) + geom_histogram()
 ``` r
 brfss_data %>% 
   filter(locationdesc %in% c("NY - New York County", "NY - Queens County")) %>% 
-  ggplot(aes(x = year, y = excellent)) + geom_point(aes(color = locationdesc))
+  ggplot(aes(x = year, y = excellent, color = locationdesc)) + 
+    geom_point() +
+    geom_smooth(se = FALSE) +
+    labs(
+      title = "The proportion of “Excellent” response values",
+      x = "Year",
+      y = "The proportion of “Excellent”"
+    ) + 
+    theme_bw() + 
+    theme(legend.position = "bottom")
 ```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
 
 ![](homework_2_files/figure-markdown_github/scatterplot-1.png)

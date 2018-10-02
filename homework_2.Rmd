@@ -9,13 +9,14 @@ library(tidyverse)
 ```
 
 ## Problem 1
-Read and clean the data
-```{r}
+Read and clean the data:
+```{r clean_subway_data}
 subway_data = 
   read_csv("./data/NYC_Transit_Subway_Entrance_And_Exit_Data.csv") %>% 
   janitor::clean_names() %>%
   select(line:entry, vending, ada) %>% 
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
+subway_data
 ```
 The dataset contains line, station name, station latitude and longitude, routes served, entry, vending, entrance type and ADA compliance. My data cleaning steps so far include: load the data and clean up the column names, select columns that I want to keep, and convert the entry variable from character to a logical variable.
 The dimension (rows x columns) of the resulting dataset is `r dim(subway_data)`.
@@ -23,7 +24,7 @@ These data are not tidy: the route number is spread across 11 columns.
 
 Answer the following questions using these data:
 
-```{r}
+```{r create_distinct_data}
 distinct_data = distinct(subway_data, line, station_name, .keep_all = TRUE)
 ```
 How many distinct stations are there?
@@ -32,19 +33,18 @@ There are `r nrow(distinct_data)` distinct stations.
 
 How many stations are ADA compliant?
 
-There are `r sum(distinct_data$ada, ada = TRUE)` stations are ADA compliant.
+There are `r nrow(filter(distinct_data, ada == TRUE))` stations are ADA compliant.
 
 What proportion of station entrances / exits without vending allow entrance?
-```{r}
-distinct_data = mutate(distinct_data, vending = recode(vending, "YES" = TRUE, "NO" = FALSE))
-```
+
 The proportion of station entrances / exits without vending allow entrance is 
-`r 1 - sum(distinct_data$vending, na.rm = FALSE) / length(distinct_data$vending)`
+`r nrow(filter(subway_data, entry == TRUE, vending == "NO")) / nrow(filter(subway_data, vending == "NO"))`
 
 Reformat data so that route number and route name are distinct variables. 
-```{r}
+```{r reformat}
 distinct_tidy = gather(distinct_data, key = route_number, value = route_name, 
                        route1:route11, na.rm = TRUE)
+distinct_tidy
 ```
 How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
 
@@ -54,26 +54,28 @@ Of the stations that serve the A train, `r nrow(filter(distinct_tidy, route_name
 
 ## Problem 2
 Read and clean the Mr.Trash Wheel sheet:
-```{r}
+```{r clean_mr_trash}
 library(readxl)
 library(cellranger)
 mr_trash_data = 
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 1,
              range = cell_cols("A:N")) %>% 
-  janitor::clean_names() %>% 
+  janitor::clean_names() %>%  
   filter(!is.na(dumpster), month != "Grand Total") %>% 
   mutate(sports_balls = round(sports_balls), 
          sports_balls = as.integer(sports_balls))
+mr_trash_data
 ```
 
 Read and clean precipitation data for 2016 and 2017:
-```{r}
+```{r clean_precipitation}
 precipitation_2016 =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 4,
              range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = "2016")
+precipitation_2016
 
 precipitation_2017 =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 3,
@@ -81,31 +83,35 @@ precipitation_2017 =
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
   mutate(year = "2017")
+precipitation_2017
 ```
 
 Combine datasets and convert month to a character variable:
-```{r}
+```{r combine_convert}
 precipitation_data = 
   bind_rows(precipitation_2016, precipitation_2017) %>% 
   mutate(month = month.name[month])
+precipitation_data
 ```
 The number of observations in "mr_trash_data" is `r nrow(mr_trash_data)`.
 The number of observations in "precipitation_data" is `r nrow(precipitation_data)`.
 
-Examples of key variables:
+Examples of key variables: The key variable in "mr_trash_data" is dempster.
+The key variable in "precipitation_data" is total. 
 
 The total precipitation in 2017 is `r sum(precipitation_2017$total)`.
-The median number of sports balls in a dumpster in 2016 is 
-`r median(subset(mr_trash_data, year == 2016)$sports_balls)`.
+The median number of sports balls in a dumpster in 2016 is
+`r median(filter(mr_trash_data, year == 2016)$sports_balls, na.rm = TRUE)`.
 
 ## Problem 3
 load the data from the  p8105.datasets package: 
-```{r}
+```{r load_data}
 devtools::install_github("p8105/p8105.datasets")
 library(p8105.datasets)
+data(brfss_smart2010)
 ```
 clean the data:
-```{r}
+```{r clean_brfss}
 brfss_data = 
   brfss_smart2010 %>% 
   janitor::clean_names() %>% 
@@ -116,32 +122,29 @@ brfss_data =
   janitor::clean_names() %>% 
   select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
   mutate(prop_exc_vg = excellent + very_good)
+brfss_data
 ```
 1）How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
-```{r}
-state_count = 
-  brfss_data %>% 
-  distinct(locationdesc, .keep_all = TRUE) %>% 
-  count(locationabbr) %>% 
+```{r }
+unique_location = distinct(brfss_data, locationdesc, .keep_all = TRUE) 
+state_data = count(unique_location, locationabbr) %>% 
   arrange(desc(n))
-state_count
+state_data
 ```
-`r nrow(distinct(brfss_data,locationdesc))` unique locations are included in the dataset.
+`r nrow(unique_location)` unique locations are included in the dataset.
 From state_count, we can see every state is represented. FL is observed the most.
 
 2）In 2002, what is the median of the “Excellent” response value?
-```{r}
-brfss_2002 = filter(brfss_data, year == 2002)
-```
-In 2012, the median of the "Excellent" response value is `r median(brfss_2002$excellent, na.rm = TRUE)`
+
+In 2002, the median of the "Excellent" response value is `r median(filter(brfss_data, year == 2002)$excellent, na.rm = TRUE)`
 
 3）Make a histogram of “Excellent” response values in the year 2002:
-```{r}
-ggplot(brfss_2002, aes(x = excellent)) + geom_histogram()
+```{r histogram}
+ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) + geom_histogram()
 ```
 
 4）Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010:
-```{r}
+```{r scatterplot}
 brfss_data %>% 
   filter(locationdesc %in% c("NY - New York County", "NY - Queens County")) %>% 
   ggplot(aes(x = year, y = excellent)) + geom_point(aes(color = locationdesc))

@@ -53,7 +53,7 @@ subway_data
     ## #   route9 <int>, route10 <int>, route11 <int>, entrance_type <chr>,
     ## #   entry <lgl>, vending <chr>, ada <lgl>
 
-The dataset contains line, station name, station latitude and longitude, routes served, entry, vending, entrance type and ADA compliance. My data cleaning steps so far include: load the data and clean up the column names, select columns that I want to keep, and convert the entry variable from character to a logical variable. The dimension (rows x columns) of the resulting dataset is 1868, 19. These data are not tidy: the route number is spread across 11 columns.
+The dataset contains the line, station's name, the latitude and longitude of the station, the routes served by the station, whether the entrance is allowed, whether an exit/entrance is with vending, type of the entrance and whether an exit/entrance is ADA compliant. My data cleaning steps so far include: load the data and clean up the column names, select columns that I want to keep, and convert the entry variable from character to a logical variable. The dimension (rows x columns) of the resulting dataset is 1868, 19. These data are not tidy: the route number is spread across 11 columns.
 
 Answer the following questions using these data:
 
@@ -115,7 +115,7 @@ mr_trash_data =
   read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 1,
              range = cell_cols("A:N")) %>% 
   janitor::clean_names() %>%  
-  filter(!is.na(dumpster), month != "Grand Total") %>% 
+  filter(!is.na(dumpster), !is.na(date)) %>% 
   mutate(sports_balls = round(sports_balls), 
          sports_balls = as.integer(sports_balls))
 mr_trash_data

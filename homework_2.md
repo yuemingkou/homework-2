@@ -254,50 +254,51 @@ brfss_data =
   filter(topic == "Overall Health") %>% 
   select(-class, -topic, -question, -sample_size, 
          -(confidence_limit_low:geo_location)) %>% 
+  rename(state = locationabbr, county = locationdesc) %>% 
   spread(key = response, value = data_value) %>% 
   janitor::clean_names() %>% 
-  select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
+  select(year, state, county, excellent, very_good, good, fair, poor) %>% 
   mutate(prop_exc_vg = excellent + very_good)
 brfss_data
 ```
 
     ## # A tibble: 2,125 x 9
-    ##     year locationabbr locationdesc excellent very_good  good  fair  poor
-    ##    <int> <chr>        <chr>            <dbl>     <dbl> <dbl> <dbl> <dbl>
-    ##  1  2002 AK           AK - Anchor~      27.9      33.7  23.8   8.6   5.9
-    ##  2  2002 AL           AL - Jeffer~      18.5      30.9  32.7  12.1   5.9
-    ##  3  2002 AR           AR - Pulask~      24.1      29.3  29.9  12.5   4.2
-    ##  4  2002 AZ           AZ - Marico~      21.6      36.6  26.9  10.3   4.6
-    ##  5  2002 AZ           AZ - Pima C~      26.6      30.1  31.9   7.5   3.9
-    ##  6  2002 CA           CA - Los An~      22.7      29.8  28.7  14.3   4.5
-    ##  7  2002 CO           CO - Adams ~      21.2      31.2  29    14.4   4.2
-    ##  8  2002 CO           CO - Arapah~      25.5      35.2  29.3   8     2.1
-    ##  9  2002 CO           CO - Denver~      22.2      27.1  36.6  11.1   3  
-    ## 10  2002 CO           CO - Jeffer~      23.4      36.6  26.3  11.4   2.4
-    ## # ... with 2,115 more rows, and 1 more variable: prop_exc_vg <dbl>
+    ##     year state county    excellent very_good  good  fair  poor prop_exc_vg
+    ##    <int> <chr> <chr>         <dbl>     <dbl> <dbl> <dbl> <dbl>       <dbl>
+    ##  1  2002 AK    AK - Anc~      27.9      33.7  23.8   8.6   5.9        61.6
+    ##  2  2002 AL    AL - Jef~      18.5      30.9  32.7  12.1   5.9        49.4
+    ##  3  2002 AR    AR - Pul~      24.1      29.3  29.9  12.5   4.2        53.4
+    ##  4  2002 AZ    AZ - Mar~      21.6      36.6  26.9  10.3   4.6        58.2
+    ##  5  2002 AZ    AZ - Pim~      26.6      30.1  31.9   7.5   3.9        56.7
+    ##  6  2002 CA    CA - Los~      22.7      29.8  28.7  14.3   4.5        52.5
+    ##  7  2002 CO    CO - Ada~      21.2      31.2  29    14.4   4.2        52.4
+    ##  8  2002 CO    CO - Ara~      25.5      35.2  29.3   8     2.1        60.7
+    ##  9  2002 CO    CO - Den~      22.2      27.1  36.6  11.1   3          49.3
+    ## 10  2002 CO    CO - Jef~      23.4      36.6  26.3  11.4   2.4        60  
+    ## # ... with 2,115 more rows
 
 1）How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
 
 ``` r
-unique_location = distinct(brfss_data, locationdesc, .keep_all = TRUE) 
-state_frequency = count(brfss_data, locationabbr) %>% 
+unique_location = distinct(brfss_data, county, .keep_all = TRUE) 
+state_frequency = count(brfss_data, state) %>% 
   arrange(desc(n))
 state_frequency
 ```
 
     ## # A tibble: 51 x 2
-    ##    locationabbr     n
-    ##    <chr>        <int>
-    ##  1 NJ             146
-    ##  2 FL             122
-    ##  3 NC             115
-    ##  4 WA              97
-    ##  5 MD              90
-    ##  6 MA              79
-    ##  7 TX              71
-    ##  8 NY              65
-    ##  9 SC              63
-    ## 10 CO              59
+    ##    state     n
+    ##    <chr> <int>
+    ##  1 NJ      146
+    ##  2 FL      122
+    ##  3 NC      115
+    ##  4 WA       97
+    ##  5 MD       90
+    ##  6 MA       79
+    ##  7 TX       71
+    ##  8 NY       65
+    ##  9 SC       63
+    ## 10 CO       59
     ## # ... with 41 more rows
 
 404 unique locations are included in the dataset. From state\_frequency, we can see every state is represented. NJ is observed the most.
@@ -329,8 +330,8 @@ ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) +
 
 ``` r
 brfss_data %>% 
-  filter(locationdesc %in% c("NY - New York County", "NY - Queens County")) %>% 
-  ggplot(aes(x = year, y = excellent, color = locationdesc)) + 
+  filter(county %in% c("NY - New York County", "NY - Queens County")) %>% 
+  ggplot(aes(x = year, y = excellent, color = county)) + 
     geom_point() +
     geom_smooth(se = FALSE) +
     labs(

@@ -118,16 +118,17 @@ brfss_data =
   filter(topic == "Overall Health") %>% 
   select(-class, -topic, -question, -sample_size, 
          -(confidence_limit_low:geo_location)) %>% 
+  rename(state = locationabbr, county = locationdesc) %>% 
   spread(key = response, value = data_value) %>% 
   janitor::clean_names() %>% 
-  select(year, locationabbr, locationdesc, excellent, very_good, good, fair, poor) %>% 
+  select(year, state, county, excellent, very_good, good, fair, poor) %>% 
   mutate(prop_exc_vg = excellent + very_good)
 brfss_data
 ```
 1）How many unique locations are included in the dataset? Is every state represented? What state is observed the most?
 ```{r }
-unique_location = distinct(brfss_data, locationdesc, .keep_all = TRUE) 
-state_frequency = count(brfss_data, locationabbr) %>% 
+unique_location = distinct(brfss_data, county, .keep_all = TRUE) 
+state_frequency = count(brfss_data, state) %>% 
   arrange(desc(n))
 state_frequency
 ```
@@ -153,8 +154,8 @@ ggplot(filter(brfss_data, year == 2002), aes(x = excellent)) +
 4）Make a scatterplot showing the proportion of “Excellent” response values in New York County and Queens County (both in NY State) in each year from 2002 to 2010:
 ```{r scatterplot}
 brfss_data %>% 
-  filter(locationdesc %in% c("NY - New York County", "NY - Queens County")) %>% 
-  ggplot(aes(x = year, y = excellent, color = locationdesc)) + 
+  filter(county %in% c("NY - New York County", "NY - Queens County")) %>% 
+  ggplot(aes(x = year, y = excellent, color = county)) + 
     geom_point() +
     geom_smooth(se = FALSE) +
     labs(

@@ -53,7 +53,22 @@ subway_data
     ## #   route9 <int>, route10 <int>, route11 <int>, entrance_type <chr>,
     ## #   entry <lgl>, vending <chr>, ada <lgl>
 
-The dataset contains the line, station's name, the latitude and longitude of the station, the routes served by the station, whether the entrance is allowed, whether an exit/entrance is with vending, type of the entrance and whether an exit/entrance is ADA compliant. My data cleaning steps so far include: load the data and clean up the column names, select columns that I want to keep, and convert the entry variable from character to a logical variable. The dimension (rows x columns) of the resulting dataset is 1868, 19. These data are not tidy: the route number is spread across 11 columns.
+``` r
+variable.names(subway_data)
+```
+
+    ##  [1] "line"              "station_name"      "station_latitude" 
+    ##  [4] "station_longitude" "route1"            "route2"           
+    ##  [7] "route3"            "route4"            "route5"           
+    ## [10] "route6"            "route7"            "route8"           
+    ## [13] "route9"            "route10"           "route11"          
+    ## [16] "entrance_type"     "entry"             "vending"          
+    ## [19] "ada"
+
+The dataset contains the line, station's name, the latitude and longitude of the station, the routes served by the station, whether the entrance is allowed, whether an exit/entrance is with vending, type of the entrance and whether an exit/entrance is ADA compliant.
+My data cleaning steps so far include: load the data by using "read\_csv" function, clean up the column names using "janitor::clean\_names", select columns that I want to keep, and convert the entry variable from character to a logical variable using "recode" function.
+The dimension (rows x columns) of the resulting dataset is 1868, 19.
+These data are not tidy: the route number is spread across 11 columns.
 
 Answer the following questions using these data:
 
@@ -62,15 +77,12 @@ distinct_data = distinct(subway_data, line, station_name, .keep_all = TRUE)
 ```
 
 How many distinct stations are there?
-
 There are 465 distinct stations.
 
 How many stations are ADA compliant?
-
 There are 84 stations are ADA compliant.
 
 What proportion of station entrances / exits without vending allow entrance?
-
 The proportion of station entrances / exits without vending allow entrance is 0.3770492
 
 Reformat data so that route number and route name are distinct variables.
@@ -100,7 +112,6 @@ distinct_tidy
 How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
 
 60 distinct stations serve the A train.
-
 Of the stations that serve the A train, 17 are ADA compliant.
 
 Problem 2
@@ -112,7 +123,7 @@ Read and clean the Mr.Trash Wheel sheet:
 library(readxl)
 library(cellranger)
 mr_trash_data = 
-  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 1,
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 1,
              range = cell_cols("A:N")) %>% 
   janitor::clean_names() %>%  
   filter(!is.na(dumpster), !is.na(date)) %>% 
@@ -121,7 +132,7 @@ mr_trash_data =
 mr_trash_data
 ```
 
-    ## # A tibble: 215 x 14
+    ## # A tibble: 285 x 14
     ##    dumpster month  year date                weight_tons volume_cubic_ya~
     ##       <dbl> <chr> <dbl> <dttm>                    <dbl>            <dbl>
     ##  1        1 May    2014 2014-05-16 00:00:00        4.31               18
@@ -134,7 +145,7 @@ mr_trash_data
     ##  8        8 May    2014 2014-05-28 00:00:00        3.7                16
     ##  9        9 June   2014 2014-06-05 00:00:00        2.52               14
     ## 10       10 June   2014 2014-06-11 00:00:00        3.76               18
-    ## # ... with 205 more rows, and 8 more variables: plastic_bottles <dbl>,
+    ## # ... with 275 more rows, and 8 more variables: plastic_bottles <dbl>,
     ## #   polystyrene <dbl>, cigarette_butts <dbl>, glass_bottles <dbl>,
     ## #   grocery_bags <dbl>, chip_bags <dbl>, sports_balls <int>,
     ## #   homes_powered <dbl>
@@ -143,7 +154,7 @@ Read and clean precipitation data for 2016 and 2017:
 
 ``` r
 precipitation_2016 =
-  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 4,
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 5,
              range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
@@ -169,7 +180,7 @@ precipitation_2016
 
 ``` r
 precipitation_2017 =
-  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 3,
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 4,
              range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
@@ -177,17 +188,21 @@ precipitation_2017 =
 precipitation_2017
 ```
 
-    ## # A tibble: 8 x 3
-    ##   month total year 
-    ##   <dbl> <dbl> <chr>
-    ## 1     1  2.34 2017 
-    ## 2     2  1.46 2017 
-    ## 3     3  3.57 2017 
-    ## 4     4  3.99 2017 
-    ## 5     5  5.64 2017 
-    ## 6     6  1.4  2017 
-    ## 7     7  7.09 2017 
-    ## 8     8  4.44 2017
+    ## # A tibble: 12 x 3
+    ##    month total year 
+    ##    <dbl> <dbl> <chr>
+    ##  1     1  2.34 2017 
+    ##  2     2  1.46 2017 
+    ##  3     3  3.57 2017 
+    ##  4     4  3.99 2017 
+    ##  5     5  5.64 2017 
+    ##  6     6  1.4  2017 
+    ##  7     7  7.09 2017 
+    ##  8     8  4.44 2017 
+    ##  9     9  1.95 2017 
+    ## 10    10  0    2017 
+    ## 11    11  0.11 2017 
+    ## 12    12  0.94 2017
 
 Combine datasets and convert month to a character variable:
 
@@ -198,7 +213,7 @@ precipitation_data =
 precipitation_data
 ```
 
-    ## # A tibble: 20 x 3
+    ## # A tibble: 24 x 3
     ##    month     total year 
     ##    <chr>     <dbl> <chr>
     ##  1 January    3.23 2016 
@@ -211,22 +226,16 @@ precipitation_data
     ##  8 August     3.96 2016 
     ##  9 September  4.53 2016 
     ## 10 October    0.62 2016 
-    ## 11 November   1.47 2016 
-    ## 12 December   2.32 2016 
-    ## 13 January    2.34 2017 
-    ## 14 February   1.46 2017 
-    ## 15 March      3.57 2017 
-    ## 16 April      3.99 2017 
-    ## 17 May        5.64 2017 
-    ## 18 June       1.4  2017 
-    ## 19 July       7.09 2017 
-    ## 20 August     4.44 2017
+    ## # ... with 14 more rows
 
-The number of observations in "mr\_trash\_data" is 215. The number of observations in "precipitation\_data" is 20.
+The number of observations in "mr\_trash\_data" is 285. The number of observations in "precipitation\_data" is 24.
 
-Examples of key variables: The key variable in "mr\_trash\_data" is dempster. The key variable in "precipitation\_data" is total.
+Examples of key variables:
+"mr\_trash\_data" contains the weight and volume of trash dumped into the dumpster, and the amount of different kinds of trash (such as plastic bottles, polystyrene, cigarette butts, glass bottles, grocery bags, chip bags and sports balls) the dumpster contained. "mr\_trash\_data" also contains the number of homes powered by the electricity made from those trash.
+"precipitation\_data" contains the total percipitation of each month in 2016 and 2017.
+The key variable in "mr\_trash\_data" is the squence number of the dempster. The key variable in "precipitation\_data" is total percipitation of the month.
 
-The total precipitation in 2017 is 29.93. The median number of sports balls in a dumpster in 2016 is 26.
+The total precipitation in 2017 is 32.93. The median number of sports balls in a dumpster in 2016 is 26.
 
 Problem 3
 ---------
@@ -301,10 +310,15 @@ state_frequency
     ## 10 CO       59
     ## # ... with 41 more rows
 
-404 unique locations are included in the dataset. From state\_frequency, we can see every state is represented. NJ is observed the most.
+``` r
+nrow(state_frequency)
+```
+
+    ## [1] 51
+
+404 unique locations are included in the dataset. From state\_frequency, we can see every state is represented. NJ is observed the most with 146 observations.
 
 2）In 2002, what is the median of the “Excellent” response value?
-
 In 2002, the median of the "Excellent" response value is 23.6
 
 3）Make a histogram of “Excellent” response values in the year 2002:

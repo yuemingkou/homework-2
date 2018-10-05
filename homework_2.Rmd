@@ -18,8 +18,14 @@ subway_data =
   mutate(entry = recode(entry, "YES" = TRUE, "NO" = FALSE))
 subway_data
 ```
-The dataset contains the line, station's name, the latitude and longitude of the station, the routes served by the station, whether the entrance is allowed, whether an exit/entrance is with vending, type of the entrance and whether an exit/entrance is ADA compliant. My data cleaning steps so far include: load the data and clean up the column names, select columns that I want to keep, and convert the entry variable from character to a logical variable.
-The dimension (rows x columns) of the resulting dataset is `r dim(subway_data)`.
+
+```{r}
+variable.names(subway_data)
+```
+
+The dataset contains the line, station's name, the latitude and longitude of the station, the routes served by the station, whether the entrance is allowed, whether an exit/entrance is with vending, type of the entrance and whether an exit/entrance is ADA compliant.  
+My data cleaning steps so far include: load the data by using "read_csv" function, clean up the column names using "janitor::clean_names", select columns that I want to keep, and convert the entry variable from character to a logical variable using "recode" function.  
+The dimension (rows x columns) of the resulting dataset is `r dim(subway_data)`.  
 These data are not tidy: the route number is spread across 11 columns.
 
 Answer the following questions using these data:
@@ -27,16 +33,13 @@ Answer the following questions using these data:
 ```{r create_distinct_data}
 distinct_data = distinct(subway_data, line, station_name, .keep_all = TRUE)
 ```
-How many distinct stations are there?
-
+How many distinct stations are there?  
 There are `r nrow(distinct_data)` distinct stations.
 
-How many stations are ADA compliant?
-
+How many stations are ADA compliant?  
 There are `r nrow(filter(distinct_data, ada == TRUE))` stations are ADA compliant.
 
-What proportion of station entrances / exits without vending allow entrance?
-
+What proportion of station entrances / exits without vending allow entrance?  
 The proportion of station entrances / exits without vending allow entrance is 
 `r nrow(filter(subway_data, entry == TRUE, vending == "NO")) / nrow(filter(subway_data, vending == "NO"))`
 
@@ -48,8 +51,7 @@ distinct_tidy
 ```
 How many distinct stations serve the A train? Of the stations that serve the A train, how many are ADA compliant?
 
-`r nrow(filter(distinct_tidy, route_name == "A"))` distinct stations serve the A train.
-
+`r nrow(filter(distinct_tidy, route_name == "A"))` distinct stations serve the A train.  
 Of the stations that serve the A train, `r nrow(filter(distinct_tidy, route_name == "A", ada == TRUE))` are ADA compliant.
 
 ## Problem 2
@@ -58,7 +60,7 @@ Read and clean the Mr.Trash Wheel sheet:
 library(readxl)
 library(cellranger)
 mr_trash_data = 
-  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 1,
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 1,
              range = cell_cols("A:N")) %>% 
   janitor::clean_names() %>%  
   filter(!is.na(dumpster), !is.na(date)) %>% 
@@ -70,7 +72,7 @@ mr_trash_data
 Read and clean precipitation data for 2016 and 2017:
 ```{r clean_precipitation}
 precipitation_2016 =
-  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 4,
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 5,
              range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
@@ -78,7 +80,7 @@ precipitation_2016 =
 precipitation_2016
 
 precipitation_2017 =
-  read_excel("./data/HealthyHarborWaterWheelTotals2017-9-26.xlsx", sheet = 3,
+  read_excel("./data/HealthyHarborWaterWheelTotals2018-7-28.xlsx", sheet = 4,
              range = "A2:B14") %>% 
   janitor::clean_names() %>% 
   filter(!is.na(total)) %>% 
@@ -96,8 +98,11 @@ precipitation_data
 The number of observations in "mr_trash_data" is `r nrow(mr_trash_data)`.
 The number of observations in "precipitation_data" is `r nrow(precipitation_data)`.
 
-Examples of key variables: The key variable in "mr_trash_data" is dempster.
-The key variable in "precipitation_data" is total. 
+Examples of key variables:  
+"mr_trash_data" contains the weight and volume of trash dumped into the dumpster, and the amount of different kinds of trash (such as plastic bottles, polystyrene, cigarette butts, glass bottles, grocery bags, chip bags and sports balls) the dumpster contained. "mr_trash_data" also contains the number of homes powered by the electricity made from those trash.  
+"precipitation_data" contains the total percipitation of each month in 2016 and 2017.  
+The key variable in "mr_trash_data" is the squence number of the dempster.
+The key variable in "precipitation_data" is total percipitation of the month. 
 
 The total precipitation in 2017 is `r sum(precipitation_2017$total)`.
 The median number of sports balls in a dumpster in 2016 is
@@ -131,12 +136,12 @@ unique_location = distinct(brfss_data, county, .keep_all = TRUE)
 state_frequency = count(brfss_data, state) %>% 
   arrange(desc(n))
 state_frequency
+nrow(state_frequency)
 ```
 `r nrow(unique_location)` unique locations are included in the dataset.
-From state_frequency, we can see every state is represented. NJ is observed the most.
+From state_frequency, we can see every state is represented. NJ is observed the most with 146 observations.
 
-2）In 2002, what is the median of the “Excellent” response value?
-
+2）In 2002, what is the median of the “Excellent” response value?  
 In 2002, the median of the "Excellent" response value is `r median(filter(brfss_data, year == 2002)$excellent, na.rm = TRUE)`
 
 3）Make a histogram of “Excellent” response values in the year 2002:
